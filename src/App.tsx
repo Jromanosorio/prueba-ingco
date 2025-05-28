@@ -81,6 +81,9 @@ function App() {
       <button className="flex gap-2 buttonConfirm text-white mt-5" onClick={handleNewUser}>
         <MdAdd/> Agregar nuevo usuario
       </button>
+      {
+        error && <span>Ha ocurrido un error cargando los usuarios</span>
+      }
       <div className="flex">
         {loading ? (
           <span>Cargando lista de usuarios</span>
@@ -88,7 +91,6 @@ function App() {
           <UserTable users={users} onDeleteFn={removeUser} />
         )}
         {addUser && <UserForm onSubmitFn={saveNewUser} onCancelFn={handleCancel} />}
-        
       <CustomModal isOpen={showModal} handleModalFn={handleModal}>
         <h2 className="font-semibold">Estas seguro que desea eliminar al usuario con ID: {selectedUserID}?</h2>
         <div className="flex gap-5 mt-5 justify-center">
