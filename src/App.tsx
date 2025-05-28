@@ -6,6 +6,7 @@ import UserTable from "./components/tableUsers/tableUsers";
 import { UserForm } from "./components/form/userForm";
 import CustomModal from "./components/modal/modal";
 import { MdAdd } from "react-icons/md";
+import { MoonLoader } from "react-spinners";
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,6 +19,9 @@ function App() {
   // Funcion para llamar al servicio que hace el API CALL para cargar los usuarios
   const loadUsers = async () => {
     try {
+      
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const data = await getUsers();
       setUsers(data.filter((user) => user.status));
     } catch (err) {
@@ -78,7 +82,7 @@ function App() {
       <p className="flex mt-5">
         Numero de usuarios activos: <b className="mx-2">{users.length}</b>
       </p>
-      <button className="flex gap-2 buttonConfirm text-white mt-5" onClick={handleNewUser}>
+      <button className="flex gap-2 buttonConfirm text-white my-5" onClick={handleNewUser}>
         <MdAdd/> Agregar nuevo usuario
       </button>
       {
@@ -86,7 +90,10 @@ function App() {
       }
       <div className="flex">
         {loading ? (
-          <span>Cargando lista de usuarios</span>
+          <div className="flex justify-center m-auto mt-10">
+            
+          <MoonLoader color="#0577b3" />
+          </div>
         ) : (
           <UserTable users={users} onDeleteFn={removeUser} />
         )}
