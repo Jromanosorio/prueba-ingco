@@ -1,29 +1,26 @@
 import { useState } from "react";
+import type { User } from "../../models/User";
 
 interface formProps {
+    userData?: User;
     onSubmitFn: any;
     onCancelFn: any;
 }
 
-export const UserForm = ({onSubmitFn, onCancelFn}: formProps) => {
+export const UserForm = ({userData = {id: 0, firstName: "", lastName: "", email: "", status: true}, onSubmitFn, onCancelFn}: formProps) => {
 
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
+    const [firstName, setFirstName] = useState(userData.firstName);
+    const [lastName, setLastName] = useState(userData.lastName);
+    const [email, setEmail] = useState(userData.email);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!firstName || !lastName || !email) {
-            alert("Todos los campos son obligatorios.");
-            return;
-        }
-
+        onSubmitFn({...userData, firstName, lastName, email, id: userData.id == 0 ? 0 : userData.id})
+        
         setFirstName("");
         setLastName("");
         setEmail("");
-
-        onSubmitFn({firstName, lastName, email})
     };
     
     return (

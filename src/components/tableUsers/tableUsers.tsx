@@ -1,13 +1,14 @@
 import { useState } from "react";
 import type { User } from "../../models/User";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
 
 interface Props {
   users: User[];
   onDeleteFn: (id: number) => void;
+  onEditFn: (user: User) => void;
 }
 
-export default function TableUsers({ users, onDeleteFn }: Props) {
+export default function TableUsers({ users, onDeleteFn, onEditFn }: Props) {
   
   // variables necesarias para realizar la paginacion 
 
@@ -36,7 +37,7 @@ export default function TableUsers({ users, onDeleteFn }: Props) {
             <th className="border border-black-300 py-2 px-8">Nombre</th>
             <th className="border border-black-300 px-8">Apellido</th>
             <th className="border border-black-300 px-8">Email</th>
-            <th className="border border-black-300 px-8">Opciones</th>
+            <th className="border border-black-300 px-12 ">Opciones</th>
           </tr>
         </thead>
       <tbody>
@@ -48,7 +49,10 @@ export default function TableUsers({ users, onDeleteFn }: Props) {
                 <td>{user.lastName}</td>
                 <td>{user.email}</td>
                 <td>
-                  <button className="buttonCancel" onClick={() => onDeleteFn(user.id)}>
+                  <button className="buttonCancel mx-1" onClick={() => onEditFn(user)}>
+                    <MdEdit color="#0577b3" />
+                  </button>
+                  <button className="buttonCancel mx-1" onClick={() => onDeleteFn(user.id)}>
                     <MdDelete color="red" />
                   </button>
                 </td>

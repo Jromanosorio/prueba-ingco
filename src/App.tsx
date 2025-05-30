@@ -9,6 +9,7 @@ import { MdAdd } from "react-icons/md";
 import { MoonLoader } from "react-spinners";
 
 function App() {
+  const [selectedUser, setSelectedUser] = useState<User>()
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState("");
   const [addUser, setAddUser] = useState(false);
@@ -20,12 +21,12 @@ function App() {
   const loadUsers = async () => {
     try {
       
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const data = await getUsers();
       setUsers(data.filter((user) => user.status));
     } catch (err) {
-      setError("Failed to fetch users");
+      setError("Error al cargar usuarios");
     } finally {
       setLoading(false);
     }
@@ -33,14 +34,27 @@ function App() {
 
   const saveNewUser = (user: any) => {
 
+    // Si se esta editando el usuario se reemplaza en el arreglo
+    if(user.id !== 0) {
+      setUsers(prevUsuarios => prevUsuarios.map(prevUser =>
+        prevUser.id === user.id ? user : prevUser)
+      );
+
+    } else {
     // Crear id automanticamente para el nuevo usuario
-    const newUser = {
-      id: users.length ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      ...user
+      const id = users.length ? Math.max(...users.map(user => user.id)) + 1 : 1
+
+      setUsers([...users, {...user, id}])
     }
 
-    setUsers([...users, newUser])
-    setAddUser(false)
+      setSelectedUser(undefined)
+      setAddUser(false)
+  }
+
+  // mostrar el formulario de nuevo usuario, cargando los datos del usuario a editar
+  const editUser = (user: User) => {
+    handleNewUser()
+    setSelectedUser(user)
   }
 
   // funcion para eliminar un usuario
@@ -65,6 +79,7 @@ function App() {
 
   const handleCancel = () => {
     setAddUser(false)
+    setSelectedUser(undefined)
   }
 
   // Funcion para mostrar modal de confirmacion
@@ -91,20 +106,19 @@ function App() {
       <div className="flex">
         {loading ? (
           <div className="flex justify-center m-auto mt-10">
-            
-          <MoonLoader color="#0577b3" />
+            <MoonLoader color="#0577b3" />
           </div>
         ) : (
-          <UserTable users={users} onDeleteFn={removeUser} />
+          <UserTable users={users} onDeleteFn={removeUser} onEditFn={editUser}/>
         )}
-        {addUser && <UserForm onSubmitFn={saveNewUser} onCancelFn={handleCancel} />}
+        {addUser && <UserForm onSubmitFn={saveNewUser} onCancelFn={handleCancel} userData={selectedUser} />}
       <CustomModal isOpen={showModal} handleModalFn={handleModal}>
         <h2 className="font-semibold">Estas seguro que desea eliminar al usuario con ID: {selectedUserID}?</h2>
         <div className="flex gap-5 mt-5 justify-center">
           <button className="buttonCancel" onClick={handleModal}>Cancelar</button>
           <button className="buttonConfirm text-white" onClick={confirmDelete}>Confirmar</button>
         </div>
-        </CustomModal>
+      </CustomModal>
       </div>
     </main>
   );
